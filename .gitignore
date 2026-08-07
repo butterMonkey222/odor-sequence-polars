@@ -1,0 +1,12 @@
+# Deny everything by default, then allow only what should be public.
+# This folder holds ~410 MB of lab recording data (statmatrix/, RData_iti_is/)
+# and other people's code (fct/). None of it should ever leave this machine.
+
+*
+
+!.gitignore
+!README.md
+
+!python/
+python/*
+!python/find_consequtive_seq_Barat.py
