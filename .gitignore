@@ -10,3 +10,4 @@
 !python/
 python/*
 !python/find_consequtive_seq_Barat.py
+!python/prepare_behavdata.py
