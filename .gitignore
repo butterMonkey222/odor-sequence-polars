@@ -7,7 +7,4 @@
 !.gitignore
 !README.md
 
-!python/
-python/*
-!python/find_consequtive_seq_Barat.py
-!python/prepare_behavdata.py
+!prepare_behavdata.py

@@ -13,8 +13,8 @@ Verified against the original: on all five rats it reproduces both summary
 numbers 1b reports, ITI5 3.623343 and ITI6 4.3515 (means of per-rat means).
 
 The original R and the recordings are not included. The script expects the
-behaviour matrices at ../statmatrix/<rat>/*BehaviorMatrix.mat, relative to this
-file. Run it directly to process every rat found there.
+behaviour matrices at statmatrix/<rat>/*BehaviorMatrix.mat, in the folder next to
+this file. Run it directly to process every rat found there.
 """
 
 import math
@@ -23,7 +23,7 @@ from pathlib import Path
 import polars as pl
 from scipy.io import loadmat
 
-DATA = Path(__file__).resolve().parent.parent / "statmatrix"
+DATA = Path(__file__).resolve().parent / "statmatrix"
 
 
 def gauss_kernel(kernel_size, sigma):

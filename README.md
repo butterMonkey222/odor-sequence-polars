@@ -6,17 +6,10 @@ performing an odor sequence memory task
 ([Shahbaba et al. 2022](https://www.nature.com/articles/s41467-022-28057-6),
 UC Irvine).
 
-The port is complete and verified against the original. The original R is not
-mine and isn't included here.
+The port is complete and verified against the original. It is one file,
+`prepare_behavdata.py`. The original R is not mine and isn't included here.
 
-## Contents
-
-| file | what it does |
-|---|---|
-| `python/prepare_behavdata.py` | the full port of `1b`: behaviour tables for every rat |
-| `python/find_consequtive_seq_Barat.py` | the first piece ported: a sequence number for each trial |
-
-## prepare_behavdata
+## What it builds
 
 For each rat, `prepare_rat(path)` turns the 3.7 million 1 ms bins of the
 behaviour matrix into the three tables that `2_extract_spike.R` reads:
@@ -31,7 +24,7 @@ ITI5 is the pause at the odor port after the last odor, before the rat runs to
 the back of the maze. ITI6 is the still period at the back after the reward,
 before it returns for the next sequence.
 
-### Verification
+## Verification
 
 On all five rats it reproduces both summary statistics recorded in `1b`:
 ITI5 = 3.623343 s and ITI6 = 4.3515 s, each the mean of the per-rat means. Both
@@ -39,7 +32,7 @@ depend on every earlier step, so together they check the whole pipeline. Each
 step was also checked against a step-by-step R replication on one rat (Barat).
 The tables have not yet been compared cell by cell with the saved `.RData`.
 
-### Differences from 1b
+## Differences from 1b
 
 - `Odor5` has no `FrontReward` column. `1b` adds one to the odor 5 table in its
   poke and withdraw step, but nothing downstream reads its value.
@@ -49,7 +42,7 @@ The tables have not yet been compared cell by cell with the saved `.RData`.
 - Nearest-time searches use as-of joins, which count an exact tie as a match
   where `find_closest_num` does not.
 
-### Implementation notes
+## Implementation notes
 
 - The per-trial search loops become as-of joins (`join_asof`), so the whole
   pipeline runs in about a second per rat.
@@ -61,7 +54,7 @@ The tables have not yet been compared cell by cell with the saved `.RData`.
 - The tables are returned in memory as polars DataFrames. Nothing is written to
   disk yet.
 
-## find_consequtive_seq
+## How sequences are defined
 
 Trials arrive as 3.7 million 1 ms bins with one-hot odor and position columns.
 The task is to group them into *sequences* — continuous runs through the five
@@ -86,21 +79,18 @@ Verified against the R on Barat: 176 trials, 21 out-of-sequence, 49 gaps,
 
 ```
 pip install polars scipy
-python python/prepare_behavdata.py
+python prepare_behavdata.py
 ```
 
-Processes every rat it finds at `statmatrix/<rat>/*BehaviorMatrix.mat`, relative
-to the repository root, then prints each rat's table shapes and the two summary
-statistics. The data isn't public, so this won't run without it.
+Processes every rat it finds at `statmatrix/<rat>/*BehaviorMatrix.mat`, in the
+folder next to the script, then prints each rat's table shapes and the two
+summary statistics. The data isn't public, so this won't run without it.
 
-To use it from other code, from inside `python/`:
+To use it from other code, from the repository root:
 
 ```python
 from prepare_behavdata import prepare_rat
 
-tables = prepare_rat("../statmatrix/Barat/Barat-11-06-2008Skips_mrg_GEcut_SGselected_BehaviorMatrix.mat")
+tables = prepare_rat("statmatrix/Barat/Barat-11-06-2008Skips_mrg_GEcut_SGselected_BehaviorMatrix.mat")
 tables["All_Odor_Mat"]    # also "Ind_Odor_Mat" and "Odor5"
 ```
-
-`find_consequtive_seq_Barat.py` is run from inside `python/` and expects the
-behavior matrix at `../statmatrix/<rat>/`.
